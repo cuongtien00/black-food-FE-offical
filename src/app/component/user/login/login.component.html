@@ -1,0 +1,80 @@
+<div class="container-fluid">
+  <div class="row no-gutter">
+    <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+    <div class="col-md-8 col-lg-6">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">
+              <form class="form-login" #f="ngForm" (ngSubmit)="f.form.valid && login()">
+                <mat-card-title style="text-align: center" >BLAC-K FOOD</mat-card-title>
+                <hr>
+
+                <mat-error class="alert alert-primary" style="margin-top: 10px" >{{status}}</mat-error>
+                <!--          Username-->
+                <mat-form-field appearance="outline" style="width: 350px">
+                  <mat-label>Username</mat-label>
+                  <input name="username"
+                         [(ngModel)]="form.username"
+                         matInput
+                         placeholder="Placeholder"
+                         required
+                         #username="ngModel">
+                  <mat-error *ngIf="username.hasError('required')">The username is required!</mat-error>
+                  <mat-icon color="accent" matSuffix>person_outline</mat-icon>
+                </mat-form-field>
+                <br>
+                <!--          Password-->
+                <mat-form-field appearance="outline" style="width: 350px">
+                  <mat-label>Enter your Password</mat-label>
+                  <input [type]="hide ? 'password' : 'text'"
+                         name="password"
+                         [(ngModel)]="form.password"
+                         matInput
+                         placeholder="Placeholder"
+                         required
+                         #password="ngModel"
+                  >
+                  <button color="accent" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                          [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error *ngIf="password.hasError('required')">The password is required!</mat-error>
+                </mat-form-field>
+                <div style="text-align: left"><mat-checkbox  class="example-margin"
+                >
+                  Remember me
+                </mat-checkbox></div>
+
+                <br>
+                <button  mat-stroked-button color = "accent"  class="mat-button-toggle-group btn-outline-primary">Login
+                  <mat-icon color="accent" matSuffix>login</mat-icon>
+                </button>
+
+                <hr class="my-4">
+                <p class="text-center">ĐĂNG NHẬP BẰNG TÀI KHOẢN MXH</p>
+                <div class="row">
+                  <div class="col pr-2">
+                    <button
+                      class="btn pl-1 pr-1 btn-lg btn-google font-weight-normal text-white btn-block text-uppercase"
+                      type="submit"><i class="fab fa-google mr-2"></i> Google</button>
+                  </div>
+                  <div class="col pl-2">
+                    <button
+                      class="btn pl-1 pr-1 btn-lg btn-facebook font-weight-normal text-white btn-block text-uppercase"
+                      type="submit"><i class="fab fa-facebook-f mr-2"></i> Facebook</button>
+                  </div>
+                  <div class="text-center pt-3 m-auto" >
+                    Bạn chưa có tài khoản? <a class="font-weight-bold"  routerLink="/signup">Đăng ký ngay</a>
+                  </div>
+                </div>
+              </form>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

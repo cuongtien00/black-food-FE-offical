@@ -1,0 +1,862 @@
+<div class="homepage-header">
+  <div class="overlay"></div>
+  <nav class="navbar navbar-expand-lg navbar-dark osahan-nav">
+    <div class="container" style="padding: 0px;">
+      <a class="navbar-brand" routerLink="/" style="font-size: 30px;font-weight: 500;">BLAC-K FOOD</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+              aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown" style="font-family: system-ui">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" routerLink="/" [routerLinkActive]="['active']" >Trang chủ <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active" *ngIf="checkRes && !checkCreateRes">
+            <a class="nav-link"  routerLink="/restaurant-homepage/{{restaurant.id}}" >Nhà hàng <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active" *ngIf="checkCreateRes">
+            <a class="nav-link"  routerLink="/restaurant-create/{{user.id}}" >Tạo nhà hàng <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active" *ngIf="checkAdmin">
+            <a class="nav-link" routerLink="/admin-homepage">Admin<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a style="cursor: pointer" class="nav-link" *ngIf="!checkLogin" routerLink="/login">Đăng nhập <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a style="cursor: pointer" class="nav-link" *ngIf="!checkLogin" routerLink="/signup">Đăng ký <span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item dropdown dropdown-cart" *ngIf="checkLogin&&!checkAdmin">
+            <a class="nav-link dropdown-toggle" routerLink="/user-profile" role="button" data-toggle="dropdown"
+               style="display: flex;align-items: center;"
+               aria-haspopup="true" aria-expanded="false">
+              <mat-icon>person</mat-icon>
+              {{user.name}}
+              <span class="badge badge-success">6</span>
+            </a>
+            <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0">
+              <div class="dropdown-cart-top-body border-top p-4">
+                <p class="mb-2">
+                  <mat-icon color="warn">account_balance_wallet</mat-icon>
+                  <span class="float-right text-secondary">{{user.amount|currency}}</span></p>
+                <p class="mb-2">
+                  <mat-icon color="warn">cake</mat-icon>
+                  <span class="float-right text-secondary">{{user.dob|date}}</span></p>
+                <p class="mb-2">
+                  <mat-icon color="warn">phone_iphone</mat-icon>
+                  <span class="float-right text-secondary">{{user.phone}}</span></p>
+                <p class="mb-2">
+                  <mat-icon color="warn">place</mat-icon>
+                  <span class="float-right text-secondary">{{user.address}}</span></p>
+                <p class="mb-2">
+                  <mat-icon color="warn">email</mat-icon>
+                  <span class="float-right text-secondary">{{user.email}}</span></p>
+                <p class="mb-2">
+                  <mat-icon color="warn">control_point</mat-icon>
+                  <span class="float-right text-secondary">{{user.point}}</span></p>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown dropdown-cart">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-shopping-basket"></i> Giỏ hàng
+<!--              <span class="badge badge-success">{{foodOrder.foodList.length}}</span>-->
+            </a>
+            <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0"
+                 style="display: flex">
+              <div class="dropdown-cart-top-body border-top p-4" *ngFor="let f of foodOrder.foodList, index as i">
+                <p class="mb-2"><i class="icofont-ui-press text-danger food-item"></i> {{f.name}}<span
+                  class="float-right text-secondary">{{f.price|currency}}</span>
+                  <mat-icon color="warn" style="cursor: pointer" id="{{i}}" (click)="removeFood($event)">delete</mat-icon>
+                </p>
+
+              </div>
+              <div class="dropdown-cart-top-footer border-top p-4">
+                <p class="mb-0 font-weight-bold text-secondary">Tổng tiền <span
+                  class="float-right text-dark">{{getTotalPrice(foodOrder.foodList)|currency}}</span></p>
+                <!-- <small class="text-info">Extra charges may apply</small> -->
+              </div>
+              <div class="dropdown-cart-top-footer border-top p-2">
+<!--                <a class="btn btn-success btn-block btn-lg" (click)="payment() "> Thanh toán</a>-->
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown dropdown-cart" *ngIf="checkLogin">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+               style="display: flex;align-items: center;"
+               aria-haspopup="true" aria-expanded="false">
+              <mat-icon>notifications</mat-icon>
+              <span class="badge badge-danger">5</span>
+            </a>
+            <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0">
+              <div class="dropdown-cart-top-body border-top p-4">
+                <p class="mb-2"><i class="icofont-ui-press text-danger food-item"></i> Chicken Tikka
+                  Sub
+                  12" (30 cm) x 1 <span class="float-right text-secondary">314.000</span></p>
+                <p class="mb-2"><i class="icofont-ui-press text-success food-item"></i> Corn & Peas
+                  Salad x 1 <span class="float-right text-secondary">209.000</span></p>
+                <p class="mb-2"><i class="icofont-ui-press text-success food-item"></i> Veg Seekh
+                  Sub 6"
+                  (15 cm) x 1 <span class="float-right text-secondary">133.000</span></p>
+                <p class="mb-2"><i class="icofont-ui-press text-danger food-item"></i> Chicken Tikka
+                  Sub
+                  12" (30 cm) x 1 <span class="float-right text-secondary">314.000</span></p>
+                <p class="mb-2"><i class="icofont-ui-press text-danger food-item"></i> Corn & Peas
+                  Salad
+                  x 1 <span class="float-right text-secondary">209.000</span></p>
+              </div>
+              <div class="dropdown-cart-top-footer border-top p-4">
+                <p class="mb-0 font-weight-bold text-secondary">Tổng tiền <span
+                  class="float-right text-dark">499.000</span></p>
+                <!-- <small class="text-info">Extra charges may apply</small> -->
+              </div>
+              <div class="dropdown-cart-top-footer border-top p-2">
+                <a class="btn btn-success btn-block btn-lg" href="checkout.html"> Thanh toán</a>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link">
+              <mat-icon>help
+              </mat-icon>
+              <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a style="cursor: pointer" class="nav-link" (click)="logout()" *ngIf="checkLogin">Đăng xuất <span
+              class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section class="pt-5 pb-5 homepage-search-block position-relative">
+    <div class="banner-overlay"></div>
+    <div class="container">
+      <div class="row d-flex align-items-center py-lg-4">
+        <div class="col-lg-8 mx-auto">
+          <div class="homepage-search-title text-center">
+            <h1 class="mb-2 display-4 text-shadow text-white font-weight-normal"><span
+              class="font-weight-bold">Don't need black friday when you have BLAC-K FOOD
+                                </span></h1>
+          </div>
+          <div class="homepage-search-form" style="margin-top: 20px;">
+            <form class="form-noborder">
+              <div class="form-row">
+                <div class="col-lg-3 col-md-3 col-sm-12 form-group">
+                  <div class="location-dropdown" >
+
+                    <select class="custom-select form-control-lg" style="height: 50px">
+                      <option> Tìm kiếm nhanh</option>
+                      <option> Ăn sáng</option>
+                      <option> Ăn trưa</option>
+                      <option> Ăn tối</option>
+                      <option> Coffee</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-12 form-group">
+                  <input type="text" placeholder="Chọn món theo sở thích"
+                         class="form-control form-control-lg">
+                  <!-- <a class="locate-me" href="#"><i class="icofont-ui-pointer"></i> Locate Me</a> -->
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 form-group">
+                  <a href="listing.html" class="btn btn-primary btn-block btn-lg btn-gradient">Tìm
+                    kiếm</a>
+
+                </div>
+              </div>
+            </form>
+          </div>
+          <h6 class="mt-4 text-shadow text-white font-weight-normal" style="font-family: 'Mulish', sans-serif;font-size: 16px">Ex. Pizzas, Fried Chicken...</h6>
+          <div class="owl-carousel owl-carousel-category owl-theme" >
+<!--            <div class="item">-->
+<!--              <div class="osahan-category-item">-->
+<!--                <a href="#">-->
+<!--                  <img class="img-fluid"-->
+<!--                       [src]="food1.image"-->
+<!--                       alt="faild">-->
+<!--                  <h6>{{food1.name}}</h6>-->
+<!--                  <p>{{food1.price|currency}}</p>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--            </div>-->
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/7_1642150970315?alt=media&token=c5b1607a-10f1-4407-a7bd-8f1f785e00e4" alt="">
+                  <h6>American</h6>
+                  <p>156</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/2_1642151677953?alt=media&token=7a613bf0-0993-48a2-b532-012f89139e27" alt="">
+                  <h6>Pizza</h6>
+                  <p>120</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/4_1642267987954?alt=media&token=7322f8e8-d553-43ec-a547-0e22929fe456" alt="">
+                  <h6>Healthy</h6>
+                  <p>130</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/8_1642311062004?alt=media&token=e2f84f1c-0823-4b50-bdd2-93b7a71f8899" alt="">
+                  <h6>Vegetarian</h6>
+                  <p>120</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/9_1642687487156?alt=media&token=d6aa6caa-842a-457b-a7a4-47ac7be5b05c" alt="">
+                  <h6>Chinese</h6>
+                  <p>111</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/7_1642688062266?alt=media&token=bbfd674e-bc0e-499e-8bae-3ca0c72a9f23" alt="">
+                  <h6>Hamburgers</h6>
+                  <p>958</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/3_1642688456481?alt=media&token=72226636-53c0-438f-905b-3a7f2d135e97" alt="">
+                  <h6>Dessert</h6>
+                  <p>56</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/9_1642687487156?alt=media&token=d6aa6caa-842a-457b-a7a4-47ac7be5b05c" alt="">
+                  <h6>Chicken</h6>
+                  <p>40</p>
+                </a>
+              </div>
+            </div>
+            <div class="item">
+              <div class="osahan-category-item">
+                <a href="#">
+                  <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/9_1642687487156?alt=media&token=d6aa6caa-842a-457b-a7a4-47ac7be5b05c" alt="">
+                  <h6>Indian</h6>
+                  <p>156</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<section class="section pt-5 pb-5 bg-white homepage-add-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 col-6">
+        <div class="products-box">
+          <a href="listing.html"><img alt="" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/pro1_1642728858717?alt=media&token=17964a6e-6178-445d-9aa0-6a6d9c81c7dd" class="img-fluid rounded"></a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="products-box">
+          <a href="listing.html"><img alt="" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/pro2_1642728882305?alt=media&token=9b004401-86e4-44bb-8c23-e58e7f2e853b" class="img-fluid rounded"></a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="products-box">
+          <a href="listing.html"><img alt="" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/pro3_1642728893631?alt=media&token=386a239d-33d6-4f04-a20f-b3bab876cdc8" class="img-fluid rounded"></a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="products-box">
+          <a href="listing.html"><img alt="" src="https://firebasestorage.googleapis.com/v0/b/product-mangement.appspot.com/o/pro4_1642728905819?alt=media&token=cc5adcb5-0f6e-4ce9-b317-a56e7fc5317e" class="img-fluid rounded"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section pt-5 pb-5 products-section">
+  <div class="container">
+    <div class="section-header text-center">
+      <h2>Đề xuất cho bạn</h2>
+      <p>Những món ngon nhất, nhiều ưu đãi đang được mọi người quan tâm</p>
+      <span class="line"></span>
+    </div>
+          </div>
+</section>
+<section class="section pt-5 pb-5 bg-white becomemember-section border-bottom">
+  <div class="container">
+    <div class="section-header text-center white-text">
+      <h2>Danh Sách Món Ăn</h2>
+      <span class="line"></span>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="offer-dedicated-body-left">
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-order-online" role="tabpanel"
+                 aria-labelledby="pills-order-online-tab">
+              <div id="#menu" class="row">
+                <!-- <h5 class="mb-4 mt-3 col-md-12">Bán chạy</h5> -->
+                <div class="col-md-4 col-sm-6 mb-4" *ngFor="let food of foodList">
+                  <div
+                    class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
+                    <div class="list-card-image">
+                      <!-- <div class="star position-absolute"><span class="badge badge-success"><i
+                                  class="icofont-star"></i> 3.1 (300+)</span></div> -->
+                      <div class="favourite-heart text-danger position-absolute"><a
+                        href="#"><i class="icofont-heart"></i></a></div>
+                      <div class="member-plan position-absolute"><span
+                        class="badge badge-dark">Promoted</span></div>
+                      <a routerLink="/restaurant-detail-food/{{food.id}}">
+                        <img [src]="food.image" class="img-fluid item-img" alt="lon">
+                      </a>
+                    </div>
+                    <div class="p-3 position-relative">
+                      <div class="list-card-body">
+                        <!--                        <h6 class="mb-1"><a href="#" class="text-black">{{food.name}}   <mat-icon color="warn">edit</mat-icon><mat-icon color="warn">delete</mat-icon></a></h6>-->
+                        <!--                        <h6 class="mb-1">-->
+                        <!--                          <p class="mb-2"> {{food.name}}<span class="float-right text-secondary"> </span></p>-->
+                        <!--                        </h6>-->
+                        <h6 style="font-weight: 500;font-size: 1rem;line-height: 1.2;" class="mb-1"><a
+                          class="text-black">{{food.name}}  <span
+                          class="float-right text-black-50"> <mat-icon color="warn"  style="cursor: pointer" id="{{food.id}}"  routerLink="/restaurant-by-food/{{food.restaurantId}}"  (click)="addShopCart($event)">add_box</mat-icon></span></a></h6>
+
+                        <p class="text-gray mb-3 time"><span
+                          class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i
+                          class="icofont-wall-clock"></i> 20–25 min</span> <span
+                          class="float-right text-black-50"> {{food.price|currency}}</span></p>
+<!--                        <p class="text-gray time mb-0"><a-->
+<!--                          class="btn btn-link btn-sm text-black" href="#">{{food.price|currency}}<span-->
+<!--                          class="badge badge-success">5% Giảm</span></a> <span-->
+<!--                          class="float-right">-->
+<!--                                                            <a class="btn btn-outline-secondary btn-sm" href="#">Mua-->
+<!--                                                                ngay</a>-->
+<!--                                                        </span>-->
+<!--                        </p>-->
+                      </div>
+                      <div class="list-card-badge">
+                        <span class="badge badge-success">Giảm</span> <small>65% | Coupon
+                        OSAHAN50</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
+            <div class="tab-pane fade" id="pills-gallery" role="tabpanel"
+                 aria-labelledby="pills-gallery-tab">
+              <div id="gallery" class="bg-white rounded shadow-sm p-4 mb-4">
+                <div class="restaurant-slider-main position-relative homepage-great-deals-carousel">
+                  <div class="owl-carousel owl-theme homepage-ad">
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/1.png">
+                    </div>
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/2.png">
+                    </div>
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/3.png">
+                    </div>
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/1.png">
+                    </div>
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/2.png">
+                    </div>
+                    <div class="item">
+                      <img class="img-fluid" src="img/gallery/3.png">
+                    </div>
+                  </div>
+                  <div class="position-absolute restaurant-slider-pics bg-dark text-white">2 of 14
+                    Photos
+                  </div>
+                  <div class="position-absolute restaurant-slider-view-all">
+                    <button type="button"
+                            class="btn btn-light bg-white">See all Photos
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-restaurant-info" role="tabpanel"
+                 aria-labelledby="pills-restaurant-info-tab">
+              <div id="restaurant-info" class="bg-white rounded shadow-sm p-4 mb-4">
+                <div class="address-map float-right ml-5">
+                  <div class="mapouter">
+                    <div class="gmap_canvas">
+                      <iframe width="300" height="170" id="gmap_canvas"
+                              src="https://maps.google.com/maps?q=university%20of%20san%20francisco&amp;t=&amp;z=9&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                              frameborder="0" scrolling="no" marginheight="0"
+                              marginwidth="0"></iframe>
+                    </div>
+                  </div>
+                </div>
+                <h5 class="mb-4">Restaurant Info</h5>
+                <p class="mb-3">Jagjit Nagar, Near Railway Crossing,
+                  <br> Near Model Town, Ludhiana, PUNJAB
+                </p>
+                <p class="mb-2 text-black"><i class="icofont-phone-circle text-primary mr-2"></i>
+                  +91 01234-56789, +91 01234-56789</p>
+                <p class="mb-2 text-black"><i class="icofont-email text-primary mr-2"></i> <a
+                  href="https://thaotrinh.info/cdn-cgi/l/email-protection"
+                  class="__cf_email__"
+                  data-cfemail="97fef6faf8e4f6fff6f9d7f0faf6fefbb9f4f8fa">[email&#160;protected]</a>,
+                  <a href="https://thaotrinh.info/cdn-cgi/l/email-protection" class="__cf_email__"
+                     data-cfemail="a6c9d5c7cec7c8c3c7d2e6c1cbc7cfca88c5c9cb">[email&#160;protected]</a>
+                </p>
+                <p class="mb-2 text-black"><i class="icofont-clock-time text-primary mr-2"></i>
+                  Today 11am – 5pm, 6pm – 11pm
+                  <span class="badge badge-success"> OPEN NOW </span>
+                </p>
+                <hr class="clearfix">
+                <p class="text-black mb-0">You can also check the 3D view by using our menue map
+                  clicking here &nbsp;&nbsp;&nbsp; <a class="text-info font-weight-bold"
+                                                      href="#">Venue Map</a></p>
+                <hr class="clearfix">
+                <h5 class="mt-4 mb-4">More Info</h5>
+                <p class="mb-3">Dal Makhani, Panneer Butter Masala, Kadhai Paneer, Raita, Veg Thali,
+                  Laccha Paratha, Butter Naan</p>
+                <div class="border-btn-main mb-4">
+                  <a class="border-btn text-success mr-2" href="#"><i
+                    class="icofont-check-circled"></i> Breakfast</a>
+                  <a class="border-btn text-danger mr-2" href="#"><i
+                    class="icofont-close-circled"></i> No Alcohol Available</a>
+                  <a class="border-btn text-success mr-2" href="#"><i
+                    class="icofont-check-circled"></i> Vegetarian Only</a>
+                  <a class="border-btn text-success mr-2" href="#"><i
+                    class="icofont-check-circled"></i> Indoor Seating</a>
+                  <a class="border-btn text-success mr-2" href="#"><i
+                    class="icofont-check-circled"></i> Breakfast</a>
+                  <a class="border-btn text-danger mr-2" href="#"><i
+                    class="icofont-close-circled"></i> No Alcohol Available</a>
+                  <a class="border-btn text-success mr-2" href="#"><i
+                    class="icofont-check-circled"></i> Vegetarian Only</a>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pills-reviews" role="tabpanel"
+                 aria-labelledby="pills-reviews-tab">
+              <div id="ratings-and-reviews"
+                   class="bg-white rounded shadow-sm p-4 mb-4 clearfix restaurant-detailed-star-rating">
+                                    <span class="star-rating float-right">
+                                        <a href="#"><i class="icofont-ui-rating icofont-2x active"></i></a>
+                                        <a href="#"><i class="icofont-ui-rating icofont-2x active"></i></a>
+                                        <a href="#"><i class="icofont-ui-rating icofont-2x active"></i></a>
+                                        <a href="#"><i class="icofont-ui-rating icofont-2x active"></i></a>
+                                        <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                    </span>
+                <h5 class="mb-0 pt-1">Rate this Place</h5>
+              </div>
+              <div class="bg-white rounded shadow-sm p-4 mb-4 clearfix graph-star-rating">
+                <h5 class="mb-0 mb-4">Ratings and Reviews</h5>
+                <div class="graph-star-rating-header">
+                  <div class="star-rating">
+                    <a href="#"><i class="icofont-ui-rating active"></i></a>
+                    <a href="#"><i class="icofont-ui-rating active"></i></a>
+                    <a href="#"><i class="icofont-ui-rating active"></i></a>
+                    <a href="#"><i class="icofont-ui-rating active"></i></a>
+                    <a href="#"><i class="icofont-ui-rating"></i></a> <b
+                    class="text-black ml-2">334</b>
+                  </div>
+                  <p class="text-black mb-4 mt-2">Rated 3.5 out of 5</p>
+                </div>
+                <div class="graph-star-rating-body">
+                  <div class="rating-list">
+                    <div class="rating-list-left text-black">
+                      5 Star
+                    </div>
+                    <div class="rating-list-center">
+                      <div class="progress">
+                        <div style="width: 56%" aria-valuemax="5" aria-valuemin="0"
+                             aria-valuenow="5" role="progressbar"
+                             class="progress-bar bg-primary">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rating-list-right text-black">56%</div>
+                  </div>
+                  <div class="rating-list">
+                    <div class="rating-list-left text-black">
+                      4 Star
+                    </div>
+                    <div class="rating-list-center">
+                      <div class="progress">
+                        <div style="width: 23%" aria-valuemax="5" aria-valuemin="0"
+                             aria-valuenow="5" role="progressbar"
+                             class="progress-bar bg-primary">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rating-list-right text-black">23%</div>
+                  </div>
+                  <div class="rating-list">
+                    <div class="rating-list-left text-black">
+                      3 Star
+                    </div>
+                    <div class="rating-list-center">
+                      <div class="progress">
+                        <div style="width: 11%" aria-valuemax="5" aria-valuemin="0"
+                             aria-valuenow="5" role="progressbar"
+                             class="progress-bar bg-primary">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rating-list-right text-black">11%</div>
+                  </div>
+                  <div class="rating-list">
+                    <div class="rating-list-left text-black">
+                      2 Star
+                    </div>
+                    <div class="rating-list-center">
+                      <div class="progress">
+                        <div style="width: 2%" aria-valuemax="5" aria-valuemin="0"
+                             aria-valuenow="5" role="progressbar"
+                             class="progress-bar bg-primary">
+                          <span class="sr-only">80% Complete (danger)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="rating-list-right text-black">02%</div>
+                  </div>
+                </div>
+                <div class="graph-star-rating-footer text-center mt-3 mb-3">
+                  <button type="button" class="btn btn-outline-primary btn-sm">Rate and
+                    Review
+                  </button>
+                </div>
+              </div>
+              <div
+                class="bg-white rounded shadow-sm p-4 mb-4 restaurant-detailed-ratings-and-reviews">
+                <a href="#" class="btn btn-outline-primary btn-sm float-right">Top Rated</a>
+                <h5 class="mb-1">All Ratings and Reviews</h5>
+                <div class="reviews-members pt-4 pb-4">
+                  <div class="media">
+                    <a href="#"><img alt="Generic placeholder image" src="img/user/1.png"
+                                     class="mr-3 rounded-pill"></a>
+                    <div class="media-body">
+                      <div class="reviews-members-header">
+                                                    <span class="star-rating float-right">
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating"></i></a>
+                                                    </span>
+                        <h6 class="mb-1"><a class="text-black" href="#">Singh Osahan</a>
+                        </h6>
+                        <p class="text-gray">Tue, 20 Mar 2020</p>
+                      </div>
+                      <div class="reviews-members-body">
+                        <p>Contrary to popular belief, Lorem Ipsum is not simply random
+                          text. It has roots in a piece of classical Latin literature from
+                          45 BC, making it over 2000 years old. Richard McClintock, a
+                          Latin professor at Hampden-Sydney College in Virginia, looked up
+                          one of the more obscure Latin words, consectetur, from a Lorem
+                          Ipsum passage, and going through the cites of the word in
+                          classical literature, discovered the undoubtable source. Lorem
+                          Ipsum comes from sections </p>
+                      </div>
+                      <div class="reviews-members-footer">
+                        <a class="total-like" href="#"><i class="icofont-thumbs-up"></i>
+                          856M</a> <a class="total-like" href="#"><i
+                        class="icofont-thumbs-down"></i> 158K</a>
+                        <span class="total-like-user-main ml-2" dir="rtl">
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Gurdeep Osahan" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/5.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Gurdeep Singh" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/2.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Askbootstrap" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/3.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Osahan"
+                                                           href="#"><img alt="Generic placeholder image"
+                                                                         src="img/user/4.png"
+                                                                         class="total-like-user rounded-pill"></a>
+                                                    </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="reviews-members pt-4 pb-4">
+                  <div class="media">
+                    <a href="#"><img alt="Generic placeholder image" src="img/user/6.png"
+                                     class="mr-3 rounded-pill"></a>
+                    <div class="media-body">
+                      <div class="reviews-members-header">
+                                                    <span class="star-rating float-right">
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating active"></i></a>
+                                                        <a href="#"><i class="icofont-ui-rating"></i></a>
+                                                    </span>
+                        <h6 class="mb-1"><a class="text-black" href="#">Gurdeep Singh</a>
+                        </h6>
+                        <p class="text-gray">Tue, 20 Mar 2020</p>
+                      </div>
+                      <div class="reviews-members-body">
+                        <p>It is a long established fact that a reader will be distracted by
+                          the readable content of a page when looking at its layout. The
+                          point of using Lorem Ipsum is that it has a more-or-less normal
+                          distribution of letters, as opposed to using 'Content here,
+                          content here', making it look like readable English.</p>
+                      </div>
+                      <div class="reviews-members-footer">
+                        <a class="total-like" href="#"><i class="icofont-thumbs-up"></i>
+                          88K</a> <a class="total-like" href="#"><i
+                        class="icofont-thumbs-down"></i> 1K</a>
+                        <span class="total-like-user-main ml-2" dir="rtl">
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Gurdeep Osahan" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/5.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Gurdeep Singh" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/2.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top"
+                                                           title="Askbootstrap" href="#"><img
+                                                          alt="Generic placeholder image" src="img/user/3.png"
+                                                          class="total-like-user rounded-pill"></a>
+                                                        <a data-toggle="tooltip" data-placement="top" title="Osahan"
+                                                           href="#"><img alt="Generic placeholder image"
+                                                                         src="img/user/4.png"
+                                                                         class="total-like-user rounded-pill"></a>
+                                                    </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <a class="text-center w-100 d-block mt-4 font-weight-bold" href="#">See All
+                  Reviews</a>
+              </div>
+              <div class="bg-white rounded shadow-sm p-4 mb-5 rating-review-select-page">
+                <h5 class="mb-4">Leave Comment</h5>
+                <p class="mb-2">Rate the Place</p>
+                <div class="mb-4">
+                                        <span class="star-rating">
+                                            <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                            <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                            <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                            <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                            <a href="#"><i class="icofont-ui-rating icofont-2x"></i></a>
+                                        </span>
+                </div>
+                <form>
+                  <div class="form-group">
+                    <label>Your Comment</label>
+                    <textarea class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <button class="btn btn-primary btn-sm" type="button"> Submit Comment
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
+          <h5 class="mb-1 text-white">Đặt hàng ngay</h5>
+          <div class="bg-white rounded shadow-sm mb-2">
+            <div class="gold-members p-2 border-bottom" *ngFor="let food of foodOrder.foodList">
+              <p class="text-gray mb-0 float-right ml-2">{{food.price|currency}}</p>
+              <span class="count-number float-right">
+                                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i
+                                      class="icofont-minus"></i> </button>
+                                    <input  class="count-number-input" type="text" value="1" readonly="">
+                                    <button class="btn btn-outline-secondary btn-sm right inc"> <i
+                                     class="icofont-plus"></i> </button>
+                                </span>
+              <div class="media">
+                <div class="mr-2"><i class="icofont-ui-press text-danger food-item"></i></div>
+                <div class="media-body">
+                  <p class="mt-1 mb-0 text-black">{{food.name}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-2 bg-white rounded p-2 clearfix" >
+            <img class="img-fluid float-left" style="width: 100px;" src="https://icons.veryicon.com/png/o/education-technology/blue-gray-solid-blend-icon/wallet-187.png">
+            <h6 class="font-weight-bold text-right mb-2">Tổng đơn: <span
+              class="text-danger">{{getTotalPrice(foodOrder.foodList)|currency}}</span> vnđ</h6>
+            <h6 class="font-weight-bold text-right mb-2">Giảm giá: <span
+              class="text-danger">30.000</span> </h6>
+            <h6 class="font-weight-bold text-right mb-2">Thanh toán: <span
+              class="text-danger">205.000</span> </h6>
+            <!-- <p class="seven-color mb-1 text-right">Extra charges may apply</p> -->
+            <p class="text-black mb-0 text-right">Tiết kiệm 30.000</p>
+          </div>
+
+          <a routerLink="/user-order-detail/{{user.id}}" class="btn btn-success btn-block btn-lg">Checkout <i
+            class="icofont-long-arrow-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+<section class="section pt-5 pb-5 text-center bg-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12" *ngIf="!checkMerchant">
+        <h5 class="m-0" style="font-size: 24px;">Bạn muốn trở thành chủ cửa hàng? <a href="login.html">Gia nhập với chúng tôi cùng cung cấp sản phẩm tốt nhất cho
+          khách hàng</a></h5>
+        <hr>
+        <button mat-stroked-button color="accent"  style="width: 150px" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2" (click)="merchantRegister()" >Đăng ký
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="footer pt-5 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-12 col-sm-12">
+        <h6 class="mb-3">Đăng ký nhận thông tin khi có giảm giá</h6>
+        <form class="newsletter-form mb-1">
+          <div class="input-group">
+            <input type="text" placeholder="Email của bạn" class="form-control">
+            <div class="input-group-append">
+              <button type="button" class="btn btn-primary">
+                Đăng ký
+              </button>
+            </div>
+          </div>
+        </form>
+        <p><a class="text-info" href="register.html">Đăng ký</a> để nhận<a
+          href="offers.html"> hàng ngàn ưu đãi khác</a></p>
+        <div class="app">
+          <p class="mb-2">DOWNLOAD APP</p>
+          <a href="#">
+            <img class="img-fluid" src="img/google.png">
+          </a>
+          <a href="#">
+            <img class="img-fluid" src="img/apple.png">
+          </a>
+        </div>
+      </div>
+      <div class="col-md-1 col-sm-6 mobile-none">
+      </div>
+      <div class="col-md-2 col-6 col-sm-4">
+        <h6 class="mb-3">Về chúng tôi</h6>
+        <ul>
+          <li><a href="#">Thông tin liên hệ</a></li>
+          <li><a href="#">Văn hóa doanh nghiệp</a></li>
+          <li><a href="#">Tầm nhìn - Sứ mệnh</a></li>
+          <li><a href="#">Tuyển dụng</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 col-6 col-sm-4">
+        <h6 class="mb-3">Dành cho cửa hàng</h6>
+        <ul>
+          <li><a href="#">Hỗ trợ kỹ thuật</a></li>
+          <li><a href="#">Hỗ trợ bán hàng</a></li>
+          <li><a href="#">Góp ý</a></li>
+          <li><a href="#">Khiếu nại</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 m-none col-4 col-sm-4">
+        <h6 class="mb-3">Khách hàng</h6>
+        <ul>
+          <li><a href="#">Bảo vệ quyền lợi người tiêu dùng</a></li>
+          <li><a href="#">Chăm sóc khách hàng</a></li>
+          <li><a href="#">Khiếu nại</a></li>
+          <li><a href="#">Góp ý</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="footer-bottom-search pt-5 pb-5 bg-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <p class="text-black">Từ khóa phổ biến</p>
+        <div class="search-links">
+          <a href="#">Gà rán</a> | <a href="#">Nem chua rán</a> | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a> | <a href="#">Gà rán</a> | <a href="#">Nem chua rán</a>
+          | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a> |<a href="#">Gà rán</a> | <a href="#">Nem chua rán</a>
+          | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a> |<a href="#">Gà rán</a> | <a href="#">Nem chua rán</a>
+          | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a> |<a href="#">Gà rán</a> | <a href="#">Nem chua rán</a>
+          | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a> |<a href="#">Gà rán</a> | <a href="#">Nem chua rán</a>
+          | <a href="#">Pizza</a> | <a
+          href="#">Highland</a> | <a href="#">Starbuck</a> | <a href="#">Bánh bèo</a> | <a
+          href="#">Tôm alaska</a> | <a href="#">Tôm hoàng đế</a>
+        </div>
+        <p class="mt-4 text-black">Danh mục món ăn</p>
+        <div class="search-links">
+          <a href="#">Fast Food</a> | <a href="#">Chinese</a> | <a href="#">Street Food</a> | <a
+          href="#">Continental</a> | <a href="#">Mithai</a> | <a href="#">Cafe</a> | <a href="#">South
+          Indian</a> | <a href="#">Punjabi Food</a> | <a href="#">Fast Food</a> | <a
+          href="#">Chinese</a> | <a href="#">Street Food</a> | <a href="#">Continental</a> | <a
+          href="#">Mithai</a> | <a href="#">Cafe</a> | <a href="#">South Indian</a> | <a
+          href="#">Punjabi Food</a><a href="#">Fast Food</a> | <a href="#">Chinese</a> | <a
+          href="#">Street Food</a> | <a href="#">Continental</a> | <a href="#">Mithai</a> | <a
+          href="#">Cafe</a> | <a href="#">South Indian</a> | <a href="#">Punjabi Food</a> | <a
+          href="#">Fast Food</a> | <a href="#">Chinese</a> | <a href="#">Street Food</a> | <a
+          href="#">Continental</a> | <a href="#">Mithai</a> | <a href="#">Cafe</a> | <a href="#">South
+          Indian</a> | <a href="#">Punjabi Food</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer class="pt-4 pb-4 text-center">
+  <div class="container">
+    <p class="mt-0 mb-0">© Copyright 2020 thaotrinhminh@gmail.com. All Rights Reserved</p>
+    <small class="mt-0 mb-0"> Made with <i class="fas fa-heart heart-icon text-danger"></i> by
+      <a class="text-danger" target="_blank"
+         href="http://thaotrinh.info">thaotrinh.info</a>
+    </small>
+  </div>
+</footer>
+
